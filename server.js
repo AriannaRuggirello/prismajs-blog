@@ -21,6 +21,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 function createPosts() {
+    
   prisma.post.createMany({
     data:[
         {
@@ -36,8 +37,16 @@ function createPosts() {
             content: 'questo è il mio secondo post',
             published: true,
            
+        },
+        {
+            title: 'terzo post con Prisma!',
+            slug : 'terzo-post-con-Prisma!',
+            content: 'questo è il mio terzo post che verrà eliminato',
+            published: false,
+           
         }
-    ]
+    ],
+    skipDuplicates: true,
   })
   .then((result)=>{
     console.log('nuovo Post creato', result);
@@ -51,28 +60,28 @@ function readPost(){
         }
     })
     .then((post) => {
-        console.log("il post: ", post);
+        console.log(" Una funzione che permette di leggere un Post usando lo slug.", post);
       });
 }
 
 function readPostsList(){
     prisma.post.findMany()
     .then((postsList) => {
-        console.log("Lista posts: ", postsList);
+        console.log("Una funzione che restituisce l’elenco di tutti i Post.", postsList);
       });
 }
 
 function updatePost(){
     prisma.post.update({
         where:{
-            id:2,
+            id:19,
         },
         data:{
-            content:'Questo è il contenuto del secondo Post modificato!'
+            content:'Questo è il contenuto del terzo Post, che verrà modificato!'
         }
     })
     .then((postUpdated)=>{
-        console.log(postUpdated);
+        console.log('Una funzione che consente di modificare un Post.',postUpdated);
     })
 }
 
@@ -83,18 +92,55 @@ prisma.post.delete({
     },
 })
 .then((postDeleted)=>{
-    console.log('è stata cancellata la pizza id : ' , postDeleted);
+    console.log('Una funzione che elimina un Post.' , postDeleted);
 })
 }
 
-// - Una funzione che consente di creare un Post.
-// createPosts(),
-// - Una funzione che permette di leggere un Post usando lo slug.
+
+// BONUS:
+// 1. Crea una funzione che restituisca solo i Post pubblicati.
+function readPublishedPosts(){
+    prisma.post.findMany({
+        where:{
+            published:true,
+        }
+    })
+    .then((post) => {
+        console.log("Crea una funzione che restituisca solo i Post pubblicati.", post);
+      });
+}
+
+
+
+// 2. Crea una funzione che restituisca solo i Post che contengono una determinata stringa nel contenuto.
+function readStringPosts(){
+    prisma.post.findMany({
+        where:{
+            content:{
+                contains: 'primo'
+            },
+        }
+    })
+    .then((post) => {
+        console.log("Crea una funzione che restituisca solo i Post che contengono una determinata stringa (es. la parola primo) nel contenuto.", post);
+      });
+}
+
+
+
+// // - Una funzione che consente di creare un Post.
+createPosts(),
+// // - Una funzione che permette di leggere un Post usando lo slug.
 readPost(),
-// - Una funzione che restituisce l’elenco di tutti i Post.
+// // - Una funzione che restituisce l’elenco di tutti i Post.
 readPostsList(),
-// - Una funzione che consente di modificare un Post.
+// // - Una funzione che consente di modificare un Post.
 updatePost()
-// - Una funzione che elimina un Post.
+// BONUS
+readPublishedPosts()
+readStringPosts()
+// // - Una funzione che elimina un Post.
 deletePost()
+
+
 
